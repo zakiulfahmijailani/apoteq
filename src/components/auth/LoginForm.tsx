@@ -4,7 +4,6 @@ import React, { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
-import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
@@ -23,7 +22,6 @@ export const LoginForm = () => {
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
-  const supabase = createClient()
 
   const {
     register,
@@ -37,17 +35,11 @@ export const LoginForm = () => {
     setIsLoading(true)
     setError(null)
 
+    // Simulate network delay
+    await new Promise(resolve => setTimeout(resolve, 800))
+
     try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email: values.email,
-        password: values.password,
-      })
-
-      if (error) {
-        setError('Email atau password salah.')
-        return
-      }
-
+      // Mock login always succeeds for demo
       router.push('/dashboard')
       router.refresh()
     } catch {

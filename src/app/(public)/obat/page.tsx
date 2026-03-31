@@ -1,5 +1,5 @@
 import React from 'react'
-import { createClient } from '@/lib/supabase/server'
+import { MOCK_DRUGS, MOCK_CATEGORIES } from '@/lib/mock-data'
 import { Search, SlidersHorizontal, ArrowRight, Pill as PillIcon } from 'lucide-react'
 import { DrugCard } from '@/components/drug/DrugCard'
 import { Badge } from '@/components/ui/Badge'
@@ -18,34 +18,23 @@ export default async function DrugSearchPage({
   searchParams: Promise<SearchParams>
 }) {
   const { q, category } = await searchParams
-  const supabase = createClient()
-
-  // Fetch categories for filters
-  const { data: categories } = await (await supabase)
-    .from('drug_categories')
-    .select('*')
-    .order('name')
-
-  // Build query for drugs
-  let query = (await supabase)
-    .from('drugs')
-    .select(`
-      *,
-      drug_categories(name),
-      verifier:profiles!drugs_verified_by_fkey(full_name)
-    `)
-    .eq('status', 'published')
-    .order('name')
+  
+  // Use mock data
+  const categories = MOCK_CATEGORIES
+  
+  let drugs = [...MOCK_DRUGS]
 
   if (q) {
-    query = query.ilike('name', `%${q}%`)
+    const searchTerm = q.toLowerCase()
+    drugs = drugs.filter(drug => 
+      drug.name.toLowerCase().includes(searchTerm) || 
+      drug.brand_names.some(brand => brand.toLowerCase().includes(searchTerm))
+    )
   }
 
   if (category) {
-    query = query.eq('drug_categories.slug', category)
+    drugs = drugs.filter(drug => drug.category?.slug === category)
   }
-
-  const { data: drugs } = await query
 
   return (
     <div className="container px-4 pb-24 space-y-12">

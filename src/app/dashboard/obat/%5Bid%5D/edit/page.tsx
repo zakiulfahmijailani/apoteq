@@ -1,7 +1,7 @@
 import React from 'react'
-import { createClient } from '@/lib/supabase/server'
-import { notFound, redirect } from 'next/navigation'
+import { notFound } from 'next/navigation'
 import { DrugForm } from '@/components/drug/DrugForm'
+import { MOCK_DRUGS, MOCK_CATEGORIES, MOCK_PROFILES } from '@/lib/mock-data'
 
 interface PageProps {
   params: Promise<{ id: string }>
@@ -9,52 +9,33 @@ interface PageProps {
 
 export default async function EditDrugPage({ params }: PageProps) {
   const { id } = await params
-  const supabase = createClient()
-  const { data: { user } } = await (await supabase).auth.getUser()
+  
+  // Static Demo: Always use pharmacist Budi Santoso
+  const profile = MOCK_PROFILES[0]
+  
+  const drug = MOCK_DRUGS.find(d => d.id === id)
 
-  if (!user) {
-    redirect('/login')
-  }
-
-  const { data: categories } = await (await supabase)
-    .from('drug_categories')
-    .select('id, name')
-    .order('name')
-
-  const { data: drug, error } = await (await supabase)
-    .from('drugs')
-    .select(`
-      *,
-      sections:drug_monograph_sections(*)
-    `)
-    .eq('id', id)
-    .single()
-
-  if (!drug || error) {
+  if (!drug) {
     notFound()
   }
 
-  // Auth Check: Only submitted_by or Verifier/Admin
-  const { data: profile } = await (await supabase)
-    .from('profiles')
-    .select('role')
-    .eq('id', user.id)
-    .single()
-
-  const isOwner = drug.submitted_by === user.id
+  // Auth Check: In static demo we allow editing if it matches owner or is admin/verifier
+  const isOwner = drug.submitted_by === profile.id
   const canEdit = isOwner || profile?.role === 'verifier' || profile?.role === 'admin'
 
   if (!canEdit) {
-    redirect('/dashboard/obat')
+    // For demo purposes, we usually allow it but can redirect if needed
+    // redirect('/dashboard/obat')
   }
 
   return (
     <div className="py-6">
       <DrugForm 
         initialData={drug} 
-        categories={categories || []} 
+        categories={MOCK_CATEGORIES} 
         mode="edit" 
       />
     </div>
   )
 }
+

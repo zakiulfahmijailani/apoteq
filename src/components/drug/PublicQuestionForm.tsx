@@ -4,7 +4,6 @@ import React, { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
-import { createClient } from '@/lib/supabase/client'
 import { 
   Send, 
   Loader2, 
@@ -37,7 +36,8 @@ export const PublicQuestionForm = ({ drugs, initialDrugId }: PublicQuestionFormP
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   
-  const supabase = createClient()
+  // Mock supabase client removed for static demo
+  // const supabase = createClient()
 
   const {
     register,
@@ -55,19 +55,11 @@ export const PublicQuestionForm = ({ drugs, initialDrugId }: PublicQuestionFormP
     setIsLoading(true)
     setError(null)
 
+    // Simulate network delay
+    await new Promise(resolve => setTimeout(resolve, 1000))
+
     try {
-      const { error: insertError } = await supabase
-        .from('public_questions')
-        .insert({
-          asker_name: values.asker_name,
-          asker_email: values.asker_email || null,
-          question_text: values.question_text,
-          drug_id: values.drug_id || initialDrugId || null,
-          status: 'pending'
-        })
-
-      if (insertError) throw insertError
-
+      // Mock submission always succeeds for demo
       setIsSubmitted(true)
       reset()
     } catch {

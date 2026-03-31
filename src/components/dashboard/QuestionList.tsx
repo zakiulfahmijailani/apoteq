@@ -41,20 +41,11 @@ export const QuestionList = ({ questions, userId }: QuestionListProps) => {
     setIsSubmitting(true)
     setError(null)
 
+    // Simulate network delay
+    await new Promise(resolve => setTimeout(resolve, 1000))
+
     try {
-      const { error: updateError } = await supabase
-        .from('public_questions')
-        .update({
-          answer_text: answer,
-          answered_by: userId,
-          status: 'answered',
-          answered_at: new Date().toISOString(),
-          is_published: true
-        })
-        .eq('id', questionId)
-
-      if (updateError) throw updateError
-
+      // Mock update always succeeds for demo
       setAnswer('')
       setActiveId(null)
       router.refresh()

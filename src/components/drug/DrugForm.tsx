@@ -4,7 +4,6 @@ import React, { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
-import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
@@ -27,7 +26,7 @@ import {
   Shield,
   FileText as LucideFileText
 } from 'lucide-react'
-import { Drug, DrugMonographSection } from '@/types'
+import { Drug } from '@/lib/mock-data'
 
 const drugSchema = z.object({
   name: z.string().min(3, { message: 'Nama obat minimal 3 karakter' }),
@@ -60,7 +59,7 @@ interface SectionContent {
 }
 
 interface DrugFormProps {
-  initialData?: Drug & { sections: DrugMonographSection[] }
+  initialData?: any
   categories: { id: string, name: string }[]
   mode?: 'create' | 'edit'
 }
@@ -70,11 +69,10 @@ export const DrugForm = ({ initialData, categories, mode = 'create' }: DrugFormP
   const [isLoading, setIsLoading] = useState(false)
   const [activeStep, setActiveStep] = useState(1)
   const [sections, setSections] = useState<SectionContent[]>(
-    initialData?.sections.map(s => ({ section_type: s.section_type, content: s.content })) || [{ section_type: 'indication', content: '' }]
+    initialData?.sections?.map((s: any) => ({ section_type: s.section_type, content: s.content })) || [{ section_type: 'indication', content: '' }]
   )
   
   const router = useRouter()
-  const supabase = createClient()
 
   const {
     register,
@@ -92,8 +90,12 @@ export const DrugForm = ({ initialData, categories, mode = 'create' }: DrugFormP
       drug_class: initialData.drug_class || '',
       summary: initialData.summary || '',
     } : {
+      name: '',
+      slug: '',
+      brand_names: '',
       category_id: '',
       drug_class: '',
+      summary: '',
     }
   })
 
@@ -133,55 +135,11 @@ export const DrugForm = ({ initialData, categories, mode = 'create' }: DrugFormP
     setIsLoading(true)
     setError(null)
 
+    // Simulate network delay
+    await new Promise(resolve => setTimeout(resolve, 1500))
+
     try {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (!user) throw new Error('Unauthorized')
-
-      const brandNames = values.brand_names?.split(',').map(s => s.trim()).filter(Boolean) || []
-
-      let drugId = initialData?.id
-      if (mode === 'create') {
-        const { data: drug, error: drugError } = await supabase.from('drugs').insert({
-          name: values.name,
-          slug: values.slug,
-          brand_names: brandNames,
-          category_id: values.category_id,
-          drug_class: values.drug_class,
-          summary: values.summary,
-          status: status,
-          submitted_by: user.id
-        }).select().single()
-
-        if (drugError) throw drugError
-        drugId = drug.id
-      } else {
-        const { error: drugError } = await supabase.from('drugs').update({
-          name: values.name,
-          slug: values.slug,
-          brand_names: brandNames,
-          category_id: values.category_id,
-          drug_class: values.drug_class,
-          summary: values.summary,
-          status: status,
-          updated_at: new Date().toISOString()
-        }).eq('id', drugId as string)
-
-        if (drugError) throw drugError
-      }
-
-      if (mode === 'edit') {
-        await supabase.from('drug_monograph_sections').delete().eq('drug_id', drugId as string)
-      }
-
-      const sectionsToInsert = sections.map(s => ({
-        drug_id: drugId as string,
-        section_type: s.section_type as 'indication' | 'dosage' | 'side_effects' | 'contraindication' | 'drug_interactions' | 'warnings' | 'pregnancy_category' | 'mechanism' | 'pharmacokinetics' | 'storage' | 'references',
-        content: s.content,
-      }))
-
-      const { error: sectionsError } = await supabase.from('drug_monograph_sections').insert(sectionsToInsert)
-      if (sectionsError) throw sectionsError
-
+      // Mock save always succeeds for demo
       router.push('/dashboard/obat')
       router.refresh()
     } catch {

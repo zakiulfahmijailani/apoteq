@@ -1,5 +1,5 @@
 import React from 'react'
-import { createClient } from '@/lib/supabase/server'
+import { MOCK_DRUGS } from '@/lib/mock-data'
 import { notFound } from 'next/navigation'
 import { 
   BadgeCheck, 
@@ -23,21 +23,11 @@ interface PageProps {
 
 export default async function DrugDetailPage({ params }: PageProps) {
   const { slug } = await params
-  const supabase = createClient()
+  
+  // Use mock data
+  const drug = MOCK_DRUGS.find(d => d.slug === slug)
 
-  const { data: drug, error } = await (await supabase)
-    .from('drugs')
-    .select(`
-      *,
-      drug_categories(name, slug),
-      verifier:profiles!drugs_verified_by_fkey(full_name, institution),
-      sections:drug_monograph_sections(*)
-    `)
-    .eq('slug', slug)
-    .eq('status', 'published')
-    .single()
-
-  if (!drug || error) {
+  if (!drug) {
     notFound()
   }
 

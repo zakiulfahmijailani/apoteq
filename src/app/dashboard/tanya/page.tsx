@@ -1,13 +1,11 @@
 import React from 'react'
-import { createClient } from '@/lib/supabase/server'
-import { redirect } from 'next/navigation'
+import { MOCK_QUESTIONS, MOCK_PROFILES } from '@/lib/mock-data'
 import { QuestionList } from '@/components/dashboard/QuestionList'
 import { MessageSquare, Search, HelpCircle, Inbox, CheckCircle2 } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { Badge } from '@/components/ui/Badge'
 import Link from 'next/link'
-import { PublicQuestionWithDetails } from '@/types'
 
 export default async function QuestionInboxPage({
   searchParams,
@@ -15,37 +13,27 @@ export default async function QuestionInboxPage({
   searchParams: Promise<{ status?: string; q?: string }>
 }) {
   const { status, q } = await searchParams
-  const supabase = createClient()
-  const { data: { user } } = await (await supabase).auth.getUser()
-
-  if (!user) {
-    redirect('/login')
-  }
-
-  let query = (await supabase)
-    .from('public_questions')
-    .select(`
-      *,
-      drug:drugs(id, name),
-      answered_by_profile:profiles!public_questions_answered_by_fkey(full_name, role)
-    `)
-    .order('created_at', { ascending: false })
+  
+  // Static Demo: Always use pharmacist Budi Santoso
+  const profile = MOCK_PROFILES[0]
+  
+  let questions = [...MOCK_QUESTIONS] as any[]
 
   if (status && status !== 'all') {
-    query = query.eq('status', status)
+    questions = questions.filter(q => q.status === status)
   }
 
   if (q) {
-    query = query.ilike('question_text', `%${q}%`)
+    const searchTerm = q.toLowerCase()
+    questions = questions.filter(q => q.question_text.toLowerCase().includes(searchTerm))
   }
-
-  const { data: questions } = await query
 
   const statusOptions = [
     { label: 'Semua Pertanyaan', value: 'all', icon: Inbox },
     { label: 'Butuh Jawaban', value: 'pending', icon: MessageSquare },
     { label: 'Selesai Dijawab', value: 'answered', icon: CheckCircle2 },
   ]
+
 
   return (
     <div className="space-y-10">
@@ -58,7 +46,7 @@ export default async function QuestionInboxPage({
         </div>
         <div className="flex items-center gap-3 animate-in fade-in slide-in-from-right-4 duration-700">
           <Badge variant="default" className="px-5 py-2.5 rounded-full text-[10px] uppercase font-bold tracking-widest bg-primary/5 border-primary/20 text-primary">
-            {(questions as unknown as PublicQuestionWithDetails[] | null)?.filter(q => q.status === 'pending').length || 0} Pertanyaan Baru
+            {questions?.filter(q => q.status === 'pending').length || 0} Pertanyaan Baru
           </Badge>
         </div>
       </div>
@@ -101,7 +89,7 @@ export default async function QuestionInboxPage({
 
       <div className="animate-in fade-in slide-in-from-bottom-8 duration-700 delay-200">
         {questions && questions.length > 0 ? (
-          <QuestionList questions={questions as unknown as PublicQuestionWithDetails[]} userId={user.id} />
+          <QuestionList questions={questions} userId={profile.id} />
         ) : (
           <div className="flex flex-col items-center justify-center py-24 text-center space-y-6 bg-surface-2/50 rounded-[3rem] border border-dashed border-border px-8">
             <div className="w-20 h-20 rounded-full bg-border/20 flex items-center justify-center text-text-muted/40">

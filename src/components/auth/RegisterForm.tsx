@@ -4,7 +4,6 @@ import React, { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import * as z from 'zod'
-import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
@@ -39,7 +38,6 @@ export const RegisterForm = () => {
   const [isSuccess, setIsSuccess] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
-  const supabase = createClient()
 
   const {
     register,
@@ -59,25 +57,11 @@ export const RegisterForm = () => {
     setIsLoading(true)
     setError(null)
 
+    // Simulate network delay
+    await new Promise(resolve => setTimeout(resolve, 1500))
+
     try {
-      const { error: signUpError } = await supabase.auth.signUp({
-        email: values.email,
-        password: values.password,
-        options: {
-          data: {
-            full_name: values.full_name,
-            role: values.role,
-            institution: values.institution,
-            sipa_number: values.sipa_number || null,
-          }
-        }
-      })
-
-      if (signUpError) {
-        setError(signUpError.message)
-        return
-      }
-
+      // Mock registration always succeeds for demo
       setIsSuccess(true)
       setTimeout(() => {
         router.push('/pending-approval')

@@ -1,5 +1,5 @@
 import React from 'react'
-import { createClient } from '@/lib/supabase/server'
+import { MOCK_DRUGS, MOCK_QUESTIONS, MOCK_PROFILES } from '@/lib/mock-data'
 import { PublicQuestionForm } from '@/components/drug/PublicQuestionForm'
 import { Card, CardContent } from '@/components/ui/Card'
 import { Badge } from '@/components/ui/Badge'
@@ -7,27 +7,15 @@ import { User, CheckCircle2, Pill, HelpCircle, ArrowRight } from 'lucide-react'
 import Link from 'next/link'
 
 export default async function PublicQuestionPage() {
-  const supabase = createClient()
+  // Use mock data
+  const drugs = MOCK_DRUGS.map(d => ({ id: d.id, name: d.name }))
 
-  // Fetch drugs for the form
-  const { data: drugs } = await (await supabase)
-    .from('drugs')
-    .select('id, name')
-    .eq('status', 'published')
-    .order('name')
-
-  // Fetch published and answered questions
-  const { data: questions } = await (await supabase)
-    .from('public_questions')
-    .select(`
-      *,
-      answered_by_profile:profiles!public_questions_answered_by_fkey(full_name, role),
-      drug:drugs(name, slug)
-    `)
-    .eq('status', 'answered')
-    .eq('is_published', true)
-    .order('answered_at', { ascending: false })
-    .limit(10)
+  // Map mock questions to include profiles and drug data as expected by the UI
+  const questions = MOCK_QUESTIONS.map(q => ({
+    ...q,
+    answered_by_profile: MOCK_PROFILES.find(p => p.id === q.answered_by),
+    drug: MOCK_DRUGS.find(d => d.id === q.drug_id)
+  })).filter(q => q.status === 'answered' && q.is_published)
 
   return (
     <div className="container px-4 pb-32 space-y-24">

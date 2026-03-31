@@ -1,6 +1,4 @@
 import React from 'react'
-import { createClient } from '@/lib/supabase/server'
-import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { 
   LayoutDashboard, 
@@ -18,6 +16,7 @@ import {
 } from 'lucide-react'
 import { Logo } from '@/components/layout/Logo'
 import { Button } from '@/components/ui/Button'
+import { MOCK_PROFILES } from '@/lib/mock-data'
 
 interface NavItem {
   title: string
@@ -30,22 +29,8 @@ export default async function DashboardLayout({
 }: {
   children: React.ReactNode
 }) {
-  const supabase = createClient()
-  const { data: { user } } = await (await supabase).auth.getUser()
-
-  if (!user) {
-    redirect('/login')
-  }
-
-  const { data: profile } = await (await supabase)
-    .from('profiles')
-    .select('role, full_name')
-    .eq('id', user.id)
-    .single()
-
-  if (!profile) {
-    redirect('/login')
-  }
+  // Static Demo: Always use pharmacist Budi Santoso
+  const profile = MOCK_PROFILES[0]
 
   const pharmacistNav: NavItem[] = [
     { title: 'Overview', href: '/dashboard', icon: LayoutDashboard },
@@ -101,12 +86,12 @@ export default async function DashboardLayout({
               <p className="text-[10px] font-bold text-text-muted uppercase tracking-widest">{profile.role}</p>
             </div>
           </div>
-          <form action="/auth/signout" method="post">
-            <Button variant="outline" className="w-full rounded-2xl h-12 gap-3 border-border hover:bg-error/5 hover:text-error hover:border-error/20 transition-all font-bold uppercase tracking-widest text-[10px]">
+          <Button variant="outline" className="w-full rounded-2xl h-12 gap-3 border-border hover:bg-error/5 hover:text-error hover:border-error/20 transition-all font-bold uppercase tracking-widest text-[10px]" asChild>
+            <Link href="/">
               <LogOut size={16} />
               Keluar Sesi
-            </Button>
-          </form>
+            </Link>
+          </Button>
         </div>
       </aside>
 
@@ -149,3 +134,4 @@ export default async function DashboardLayout({
     </div>
   )
 }
+

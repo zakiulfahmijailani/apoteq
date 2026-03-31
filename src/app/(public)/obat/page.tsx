@@ -1,11 +1,11 @@
-import React, { Suspense } from 'react'
+import React from 'react'
 import { createClient } from '@/lib/supabase/server'
-import { Pill, Search, SlidersHorizontal, ArrowRight, Pill as PillIcon } from 'lucide-react'
+import { Search, SlidersHorizontal, ArrowRight, Pill as PillIcon } from 'lucide-react'
 import { DrugCard } from '@/components/drug/DrugCard'
 import { Badge } from '@/components/ui/Badge'
-import { Input } from '@/components/ui/Input'
 import { Button } from '@/components/ui/Button'
 import Link from 'next/link'
+import { DrugCategory } from '@/types'
 
 interface SearchParams {
   q?: string
@@ -21,7 +21,7 @@ export default async function DrugSearchPage({
   const supabase = createClient()
 
   // Fetch categories for filters
-  const { data: categories } = await supabase
+  const { data: categories } = await (await supabase)
     .from('drug_categories')
     .select('*')
     .order('name')
@@ -45,14 +45,14 @@ export default async function DrugSearchPage({
     query = query.eq('drug_categories.slug', category)
   }
 
-  const { data: drugs, error } = await query
+  const { data: drugs } = await query
 
   return (
     <div className="container px-4 pb-24 space-y-12">
       {/* Search Header */}
       <section className="pt-10 flex flex-col md:flex-row items-end justify-between gap-8 border-b border-border pb-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
         <div className="space-y-4 max-w-2xl">
-          <Badge variant="primary" className="px-4 py-1.5 rounded-full text-[10px] uppercase font-bold tracking-widest">
+          <Badge variant="default" className="px-4 py-1.5 rounded-full text-[10px] uppercase font-bold tracking-widest">
             Database Obat Terverifikasi
           </Badge>
           <h1 className="text-4xl md:text-6xl font-serif text-text leading-tight">
@@ -100,49 +100,48 @@ export default async function DrugSearchPage({
                 <ArrowRight size={14} className={`transition-transform duration-350 ${!category ? 'translate-x-0' : '-translate-x-2 opacity-0 group-hover:translate-x-0 group-hover:opacity-100'}`} />
               </Link>
               
-              {categories?.map((cat) => (
-                <Link 
-                  key={cat.id}
-                  href={`/obat?category=${cat.slug}${q ? `&q=${q}` : ''}`}
-                  className={`px-4 py-3 rounded-xl text-sm font-medium transition-all flex items-center justify-between group ${
-                    category === cat.slug 
-                      ? 'bg-primary text-white shadow-lg shadow-primary/20' 
-                      : 'text-text-muted hover:bg-surface-2 hover:text-primary border border-transparent hover:border-border'
-                  }`}
-                >
-                  <span>{cat.name}</span>
-                  <ArrowRight size={14} className={`transition-transform duration-350 ${category === cat.slug ? 'translate-x-0' : '-translate-x-2 opacity-0 group-hover:translate-x-0 group-hover:opacity-100'}`} />
-                </Link>
-              ))}
-            </div>
-          </div>
-
-          <div className="p-6 rounded-3xl bg-[#01696f]/5 border border-[#01696f]/10 space-y-4">
-            <h4 className="text-sm font-bold text-primary uppercase tracking-widest">Butuh Bantuan?</h4>
-            <p className="text-xs text-text-muted leading-relaxed italic">
-              Jika Anda tidak menemukan obat yang dicari, silakan ajukan pertanyaan kepada tim farmasis kami.
-            </p>
-            <Button size="sm" className="w-full rounded-xl bg-[#01696f] text-white py-5" asChild>
-              <Link href="/tanya">Tanya Farmasis</Link>
-            </Button>
-          </div>
-        </aside>
-
-        {/* Drug Grid */}
-        <div className="flex-1 space-y-12 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-200">
-          <div className="flex items-center justify-between">
-            <p className="text-sm text-text-muted font-medium">
-              Menampilkan <span className="text-text font-bold">{drugs?.length || 0}</span> hasil untuk 
-              {q ? ` "${q}"` : ' semua obat'} 
-              {category ? ` dalam kategori "${categories?.find(c => c.slug === category)?.name}"` : ''}
-            </p>
-          </div>
+                  {categories?.map((cat: DrugCategory) => (
+                    <Link 
+                      key={cat.id}
+                      href={`/obat?category=${cat.slug}${q ? `&q=${q}` : ''}`}
+                      className={`px-4 py-3 rounded-xl text-sm font-medium transition-all flex items-center justify-between group ${
+                        category === cat.slug 
+                          ? 'bg-primary text-white shadow-lg shadow-primary/20' 
+                          : 'text-text-muted hover:bg-surface-2 hover:text-primary border border-transparent hover:border-border'
+                      }`}
+                    >
+                      <span>{cat.name}</span>
+                      <ArrowRight size={14} className={`transition-transform duration-350 ${category === cat.slug ? 'translate-x-0' : '-translate-x-2 opacity-0 group-hover:translate-x-0 group-hover:opacity-100'}`} />
+                    </Link>
+                  ))}
+                </div>
+              </div>
+    
+              <div className="p-6 rounded-3xl bg-[#01696f]/5 border border-[#01696f]/10 space-y-4">
+                <h4 className="text-sm font-bold text-primary uppercase tracking-widest">Butuh Bantuan?</h4>
+                <p className="text-xs text-text-muted leading-relaxed italic">
+                  Jika Anda tidak menemukan obat yang dicari, silakan ajukan pertanyaan kepada tim farmasis kami.
+                </p>
+                <Button size="sm" className="w-full rounded-xl bg-[#01696f] text-white py-5" asChild>
+                  <Link href="/tanya">Tanya Farmasis</Link>
+                </Button>
+              </div>
+            </aside>
+    
+            {/* Drug Grid */}
+            <div className="flex-1 space-y-12 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-200">
+              <div className="flex items-center justify-between">
+                <p className="text-sm text-text-muted font-medium">
+                  Menampilkan <span className="text-text font-bold">{drugs?.length || 0}</span> hasil untuk 
+                  {q ? ` "${q}"` : ' semua obat'} 
+                  {category ? ` dalam kategori "${categories?.find((c: DrugCategory) => c.slug === category)?.name}"` : ''}
+                </p>
+              </div>
 
           {drugs && drugs.length > 0 ? (
             <div className="grid md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-8">
-              {//@ts-ignore - Supabase type casting
-              drugs.map((drug) => (
-                <DrugCard key={drug.id} drug={drug as any} />
+              {drugs.map((drug) => (
+                <DrugCard key={drug.id} drug={drug} />
               ))}
             </div>
           ) : (

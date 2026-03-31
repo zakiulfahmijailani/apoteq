@@ -1,11 +1,11 @@
 import React from 'react'
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
-import { Clock, Search, Filter, Shield, User, Activity, AlertCircle, HardDrive, ArrowRight, Database } from 'lucide-react'
-import { Card, CardHeader, CardContent, CardTitle, CardDescription } from '@/components/ui/Card'
+import { Clock, Search, Activity, Database } from 'lucide-react'
+import { Card, CardContent } from '@/components/ui/Card'
 import { Badge } from '@/components/ui/Badge'
-import { Button } from '@/components/ui/Button'
 import Link from 'next/link'
+import { Profile } from '@/types'
 
 export default async function AdminAuditPage({
   searchParams,
@@ -133,8 +133,7 @@ export default async function AdminAuditPage({
                         </span>
                       </div>
                       <p className="text-lg font-serif text-text leading-tight font-medium">
-                        {//@ts-ignore - Supabase type casting
-                        log.profile?.full_name || 'System'} <span className="text-text-muted font-sans font-normal text-sm lowercase">performed</span> {log.action.toLowerCase().replace('_', ' ')} <span className="text-text-muted font-sans font-normal text-sm lowercase">on</span> {log.resource_type || 'system'}
+                        {(log.profile as unknown as Profile | null)?.full_name || 'System'} <span className="text-text-muted font-sans font-normal text-sm lowercase">performed</span> {log.action.toLowerCase().replace('_', ' ')} <span className="text-text-muted font-sans font-normal text-sm lowercase">on</span> {log.resource_type || 'system'}
                       </p>
                       {log.metadata && (
                         <div className="p-4 rounded-xl bg-surface-2 border border-border text-xs font-medium text-text-muted font-mono overflow-hidden truncate">

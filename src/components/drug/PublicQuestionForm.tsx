@@ -20,13 +20,19 @@ import { Textarea } from '@/components/ui/Textarea'
 
 const questionSchema = z.object({
   asker_name: z.string().min(2, { message: 'Nama minimal 2 karakter' }),
-  asker_email: z.string().email({ message: 'Email tidak valid' }),
+  asker_email: z.string().email({ message: 'Email tidak valid' }).optional().or(z.literal('')),
   question_text: z.string().min(10, { message: 'Pertanyaan minimal 10 karakter' }).max(1000),
+  drug_id: z.string().optional(),
 })
 
 type QuestionFormValues = z.infer<typeof questionSchema>
 
-export const PublicQuestionForm = ({ drugId }: { drugId?: string }) => {
+interface PublicQuestionFormProps {
+  drugs?: { id: string; name: string }[]
+  initialDrugId?: string
+}
+
+export const PublicQuestionForm = ({ drugs, initialDrugId }: PublicQuestionFormProps) => {
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -40,6 +46,9 @@ export const PublicQuestionForm = ({ drugId }: { drugId?: string }) => {
     formState: { errors },
   } = useForm<QuestionFormValues>({
     resolver: zodResolver(questionSchema),
+    defaultValues: {
+      drug_id: initialDrugId || '',
+    }
   })
 
   const onSubmit = async (values: QuestionFormValues) => {
@@ -51,9 +60,9 @@ export const PublicQuestionForm = ({ drugId }: { drugId?: string }) => {
         .from('public_questions')
         .insert({
           asker_name: values.asker_name,
-          asker_email: values.asker_email,
+          asker_email: values.asker_email || null,
           question_text: values.question_text,
-          drug_id: drugId,
+          drug_id: values.drug_id || initialDrugId || null,
           status: 'pending'
         })
 
@@ -96,7 +105,7 @@ export const PublicQuestionForm = ({ drugId }: { drugId?: string }) => {
             <h3 className="text-lg font-bold uppercase tracking-widest">Tanya Farmasis</h3>
           </div>
           <p className="text-text-muted leading-relaxed">
-            Punya pertanyaan mengenai penggunaan obat ini? Tim apoteker kami siap membantu memberikan informasi yang akurat.
+            Punya pertanyaan mengenai penggunaan obat? Tim apoteker kami siap membantu memberikan informasi yang akurat.
           </p>
         </div>
       </CardHeader>
@@ -128,19 +137,37 @@ export const PublicQuestionForm = ({ drugId }: { drugId?: string }) => {
             />
           </div>
 
-          <Textarea
-            label="Pertanyaan Anda"
-            placeholder="Tuliskan detail pertanyaan Anda mengenai dosis, efek samping, atau interaksi obat..."
-            {...register('question_text')}
-            error={errors.question_text?.message}
-            disabled={isLoading}
-            className="rounded-3xl min-h-[160px]"
-          />
+          {drugs && drugs.length > 0 && (
+            <div className="space-y-2">
+              <label className="text-sm font-bold text-text uppercase tracking-widest pl-1">Pilih Obat (Opsional)</label>
+              <select
+                {...register('drug_id')}
+                className="w-full h-12 rounded-2xl bg-surface border border-border px-4 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm appearance-none"
+                disabled={isLoading}
+              >
+                <option value="">-- Pilih Obat --</option>
+                {drugs.map(drug => (
+                  <option key={drug.id} value={drug.id}>{drug.name}</option>
+                ))}
+              </select>
+            </div>
+          )}
+
+          <div className="space-y-2">
+            <label className="text-sm font-bold text-text uppercase tracking-widest pl-1">Pertanyaan Anda</label>
+            <Textarea
+              placeholder="Tuliskan detail pertanyaan Anda mengenai dosis, efek samping, atau interaksi obat..."
+              {...register('question_text')}
+              error={errors.question_text?.message}
+              disabled={isLoading}
+              className="rounded-3xl min-h-[160px]"
+            />
+          </div>
 
           <div className="flex flex-col md:flex-row items-center justify-between gap-6 pt-4">
-            <div className="flex items-center gap-3 text-xs text-text-muted font-medium italic">
-              <User size={16} className="text-primary opacity-40" />
-              Identitas Anda akan disamarkan di halaman publik.
+            <div className="flex items-center gap-3 text-xs text-text-muted font-medium italic text-left">
+              <User size={16} className="text-primary opacity-40 shrink-0" />
+              <span>Identitas Anda akan disamarkan di halaman publik.</span>
             </div>
             <Button 
               type="submit" 

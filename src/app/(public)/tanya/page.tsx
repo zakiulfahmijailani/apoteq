@@ -1,9 +1,9 @@
 import React from 'react'
 import { createClient } from '@/lib/supabase/server'
 import { PublicQuestionForm } from '@/components/drug/PublicQuestionForm'
-import { Card, CardHeader, CardContent, CardTitle, CardDescription } from '@/components/ui/Card'
+import { Card, CardContent } from '@/components/ui/Card'
 import { Badge } from '@/components/ui/Badge'
-import { MessageCircle, User, Calendar, CheckCircle2, Pill, HelpCircle, ArrowRight } from 'lucide-react'
+import { User, CheckCircle2, Pill, HelpCircle, ArrowRight } from 'lucide-react'
 import Link from 'next/link'
 
 export default async function PublicQuestionPage() {
@@ -33,7 +33,7 @@ export default async function PublicQuestionPage() {
     <div className="container px-4 pb-32 space-y-24">
       {/* Search Header */}
       <section className="pt-10 flex flex-col items-center text-center space-y-6 max-w-3xl mx-auto animate-in fade-in slide-in-from-bottom-4 duration-700">
-        <Badge variant="primary" className="px-5 py-2 rounded-full uppercase text-[10px] font-bold tracking-widest bg-primary/5 border-primary/20 text-primary">
+        <Badge variant="default" className="px-5 py-2 rounded-full uppercase text-[10px] font-bold tracking-widest bg-primary/5 border-primary/20 text-primary">
           Konsultasi Informasi Obat
         </Badge>
         <h1 className="text-4xl md:text-7xl font-serif text-text leading-[1.1]">
@@ -88,7 +88,7 @@ export default async function PublicQuestionPage() {
                       )}
                     </div>
                     <p className="text-2xl md:text-3xl font-serif text-text italic leading-relaxed">
-                      "{q.question_text}"
+                      &quot;{q.question_text}&quot;
                     </p>
                   </div>
 

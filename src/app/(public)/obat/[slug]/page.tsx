@@ -3,9 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 import { notFound } from 'next/navigation'
 import { 
   BadgeCheck, 
-  Calendar, 
   User, 
-  Pill, 
   AlertTriangle, 
   ChevronRight,
   Info,
@@ -16,6 +14,7 @@ import {
 } from 'lucide-react'
 import { Badge } from '@/components/ui/Badge'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card'
+import { Button } from '@/components/ui/Button'
 import Link from 'next/link'
 
 interface PageProps {
@@ -113,7 +112,7 @@ export default async function DrugDetailPage({ params }: PageProps) {
                   <h2 className="text-lg font-bold uppercase tracking-widest">Ringkasan Monografi</h2>
                 </div>
                 <p className="text-lg text-text italic leading-relaxed">
-                  "{drug.summary || 'Informasi lengkap mengenai indikasi, dosis, efek samping, dan kontraindikasi penggunaan obat.'}"
+                  &quot;{drug.summary || 'Informasi lengkap mengenai indikasi, dosis, efek samping, dan kontraindikasi penggunaan obat.'}&quot;
                 </p>
                 <div className="flex flex-wrap items-center gap-8 pt-4 border-t border-border/50">
                   <div className="flex items-center gap-3 text-sm text-text-muted">

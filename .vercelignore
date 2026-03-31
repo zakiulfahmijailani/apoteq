@@ -1,0 +1,9 @@
+.next
+node_modules
+.env.local
+.gemini
+.claude
+supabase/migrations
+docs
+README-PHASE-*.md
+test-results

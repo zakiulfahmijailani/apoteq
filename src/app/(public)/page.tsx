@@ -1,17 +1,12 @@
 import React from 'react'
-import { createClient } from '@/lib/supabase/server'
+import { MOCK_CATEGORIES } from '@/lib/mock-data'
 import { Search, Shield, HelpCircle, ArrowRight, Pill, UserCheck } from 'lucide-react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/Button'
 import { Card, CardContent } from '@/components/ui/Card'
 
 export default async function HomePage() {
-  const supabase = await createClient()
-
-  const { data: categories } = await supabase
-    .from('drug_categories')
-    .select('*')
-    .order('name')
+  const categories = MOCK_CATEGORIES
 
   return (
     <div className="flex flex-col gap-24 pb-32">

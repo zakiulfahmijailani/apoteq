@@ -5,6 +5,8 @@ import { Mail, CheckCircle2, ArrowRight, LogIn } from 'lucide-react'
 import { Logo } from '@/components/layout/Logo'
 import Link from 'next/link'
 
+export const dynamic = 'force-dynamic'
+
 export default function VerifyEmailPage() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-background p-4 relative overflow-hidden">

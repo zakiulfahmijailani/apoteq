@@ -3,6 +3,8 @@ import { LoginForm } from '@/components/auth/LoginForm'
 import { Logo } from '@/components/layout/Logo'
 import Link from 'next/link'
 
+export const dynamic = 'force-dynamic'
+
 export default function LoginPage() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-background p-4 relative overflow-hidden">

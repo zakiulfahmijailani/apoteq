@@ -4,16 +4,11 @@ import {
   FileText, 
   CheckCircle2, 
   HelpCircle, 
-  Shield, 
-  Users, 
-  Clock, 
-  ArrowRight,
   Plus,
-  Search,
   MessageSquare,
   AlertCircle
 } from 'lucide-react'
-import { Card, CardHeader, CardTitle, CardContent, CardDescription } from '@/components/ui/Card'
+import { Card, CardContent } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import Link from 'next/link'
 import { MOCK_PROFILES, MOCK_DRUGS, MOCK_QUESTIONS, Profile } from '@/lib/mock-data'

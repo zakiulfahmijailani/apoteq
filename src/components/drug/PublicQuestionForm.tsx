@@ -51,7 +51,7 @@ export const PublicQuestionForm = ({ drugs, initialDrugId }: PublicQuestionFormP
     }
   })
 
-  const onSubmit = async (values: QuestionFormValues) => {
+  const onSubmit = async (_values: QuestionFormValues) => {
     setIsLoading(true)
     setError(null)
 

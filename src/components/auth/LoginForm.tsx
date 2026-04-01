@@ -31,7 +31,7 @@ export const LoginForm = () => {
     resolver: zodResolver(loginSchema),
   })
 
-  const onSubmit = async (values: LoginFormValues) => {
+  const onSubmit = async (_values: LoginFormValues) => {
     setIsLoading(true)
     setError(null)
 

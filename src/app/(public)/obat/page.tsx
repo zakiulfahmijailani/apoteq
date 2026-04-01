@@ -129,9 +129,10 @@ export default async function DrugSearchPage({
 
           {drugs && drugs.length > 0 ? (
             <div className="grid md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-8">
-              {drugs.map((drug) => (
-                <DrugCard key={drug.id} drug={drug as any} />
-              ))}
+              {drugs.map((drug) => {
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                return <DrugCard key={drug.id} drug={drug as any} />
+              })}
             </div>
           ) : (
             <div className="flex flex-col items-center justify-center py-24 text-center space-y-6 bg-surface-2/50 rounded-[3rem] border border-dashed border-border px-8">

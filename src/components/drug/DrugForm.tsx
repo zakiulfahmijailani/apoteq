@@ -131,7 +131,7 @@ export const DrugForm = ({ initialData, categories, mode = 'create' }: DrugFormP
     setSections(newSections)
   }
 
-  const onSave = async (values: DrugFormValues, status: 'draft' | 'review') => {
+  const onSave = async (_values: DrugFormValues, _status: 'draft' | 'review') => {
     setIsLoading(true)
     setError(null)
 

@@ -53,7 +53,7 @@ export const RegisterForm = () => {
 
   const selectedRole = watch('role')
 
-  const onSubmit = async (values: RegisterFormValues) => {
+  const onSubmit = async (_values: RegisterFormValues) => {
     setIsLoading(true)
     setError(null)
 

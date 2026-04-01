@@ -27,12 +27,12 @@ interface QuestionListProps {
   userId: string
 }
 
-export const QuestionList = ({ questions, userId }: QuestionListProps) => {
+export const QuestionList = ({ questions, userId: _userId }: QuestionListProps) => {
   const [activeId, setActiveId] = useState<string | null>(null)
   const [answer, setAnswer] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const supabase = createClient()
+  const _supabase = createClient()
   const router = useRouter()
 
   const handleAnswer = async (questionId: string) => {

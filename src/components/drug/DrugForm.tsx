@@ -59,7 +59,7 @@ interface SectionContent {
 }
 
 interface DrugFormProps {
-  initialData?: any
+  initialData?: Partial<Drug>
   categories: { id: string, name: string }[]
   mode?: 'create' | 'edit'
 }
@@ -69,7 +69,7 @@ export const DrugForm = ({ initialData, categories, mode = 'create' }: DrugFormP
   const [isLoading, setIsLoading] = useState(false)
   const [activeStep, setActiveStep] = useState(1)
   const [sections, setSections] = useState<SectionContent[]>(
-    initialData?.sections?.map((s: any) => ({ section_type: s.section_type, content: s.content })) || [{ section_type: 'indication', content: '' }]
+    initialData?.sections?.map((s) => ({ section_type: s.section_type, content: s.content })) || [{ section_type: 'indication', content: '' }]
   )
   
   const router = useRouter()

@@ -33,7 +33,7 @@ export default async function DrugSearchPage({
   }
 
   if (category) {
-    drugs = drugs.filter(drug => drug.category?.slug === category)
+    drugs = drugs.filter(drug => drug.drug_categories?.slug === category)
   }
 
   return (
@@ -130,7 +130,7 @@ export default async function DrugSearchPage({
           {drugs && drugs.length > 0 ? (
             <div className="grid md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-8">
               {drugs.map((drug) => (
-                <DrugCard key={drug.id} drug={drug} />
+                <DrugCard key={drug.id} drug={drug as any} />
               ))}
             </div>
           ) : (

@@ -16,7 +16,7 @@ import {
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import Link from 'next/link'
-import { MOCK_PROFILES, MOCK_DRUGS, MOCK_QUESTIONS } from '@/lib/mock-data'
+import { MOCK_PROFILES, MOCK_DRUGS, MOCK_QUESTIONS, Profile } from '@/lib/mock-data'
 
 export default async function DashboardPage() {
   // Static Demo: Always show Pharmacist Dashboard for the primary user
@@ -25,7 +25,7 @@ export default async function DashboardPage() {
   return <PharmacistDashboard profile={profile} />
 }
 
-function PharmacistDashboard({ profile }: { profile: any }) {
+function PharmacistDashboard({ profile }: { profile: Profile }) {
   // Mock stats based on mock data
   const myDrafts = MOCK_DRUGS.filter(d => d.submitted_by === profile.id && d.status === 'draft').length
   const myPublished = MOCK_DRUGS.filter(d => d.submitted_by === profile.id && d.status === 'published').length

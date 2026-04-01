@@ -1,5 +1,6 @@
 import React from 'react'
 import { MOCK_QUESTIONS, MOCK_PROFILES } from '@/lib/mock-data'
+import { PublicQuestionWithDetails } from '@/types'
 import { QuestionList } from '@/components/dashboard/QuestionList'
 import { MessageSquare, Search, HelpCircle, Inbox, CheckCircle2 } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/Card'
@@ -17,7 +18,7 @@ export default async function QuestionInboxPage({
   // Static Demo: Always use pharmacist Budi Santoso
   const profile = MOCK_PROFILES[0]
   
-  let questions = [...MOCK_QUESTIONS] as any[]
+  let questions = [...MOCK_QUESTIONS] as unknown as PublicQuestionWithDetails[]
 
   if (status && status !== 'all') {
     questions = questions.filter(q => q.status === status)

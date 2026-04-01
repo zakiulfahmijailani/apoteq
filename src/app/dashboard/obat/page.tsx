@@ -1,5 +1,5 @@
 import React from 'react'
-import { MOCK_DRUGS, MOCK_PROFILES } from '@/lib/mock-data'
+import { MOCK_DRUGS, MOCK_PROFILES, Drug } from '@/lib/mock-data'
 import { Pill, Search, Plus, Eye, Edit3, ChevronRight, FileText } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { Card, CardContent } from '@/components/ui/Card'
@@ -97,7 +97,7 @@ export default async function MyDrugsPage({
       <div className="space-y-6 animate-in fade-in slide-in-from-bottom-8 duration-700 delay-200">
         {drugs && drugs.length > 0 ? (
           <div className="grid grid-cols-1 gap-4">
-            {drugs.map((drug: any) => (
+            {drugs.map((drug: Drug) => (
               <Card key={drug.id} className="border-none bg-surface-2/40 hover:bg-surface-2 transition-all p-2 rounded-3xl group">
                 <CardContent className="p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-8">
                   <div className="flex items-center gap-6 flex-1 min-w-0">
